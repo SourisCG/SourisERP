@@ -1,0 +1,25 @@
+{
+  // This project is Docker-first: builds and tests run inside containers
+  // (`make build`, `make test`). Maven and VS Code's Java language server
+  // must NOT compile the same sources at the same time, otherwise their
+  // generated-sources outputs (MapStruct) overwrite each other and produce
+  // errors like "public class  {" in the editor.
+  //
+  // Keep autobuild disabled and compile with Maven (`make test`), or use the
+  // VS Code task/command "Java: Clean Java Language Server Workspace" after
+  // running Maven outside the editor.
+  "java.autobuild.enabled": false,
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.maven.enabled": true,
+  "files.watcherExclude": {
+    "**/target/**": true,
+    "**/.next/**": true,
+    "**/node_modules/**": true,
+    "**/.playwright-browsers/**": true
+  },
+  "files.exclude": {
+    "**/target": true,
+    "**/.next": true
+  },
+  "spring-boot.ls.problem.application-properties.unknown-property": "IGNORE"
+}
