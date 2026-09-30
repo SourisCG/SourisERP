@@ -1,11 +1,11 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { api, ApiRequestError } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
 import { hasAnyRole, useSessionUser } from "@/lib/use-user";
-import { ErrorBox, Modal, money, Spinner } from "@/components/ui";
+import { ErrorBox, Modal, Spinner } from "@/components/ui";
 
 type InventoryRow = {
   id: number;

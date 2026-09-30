@@ -9,6 +9,8 @@ target/
 .idea/
 *.iml
 .vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
 .settings/
 .project
 .classpath

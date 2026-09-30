@@ -6,6 +6,8 @@ package com.portfolio.erp.domain.exception;
  */
 public class DomainException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     private final String code;
     private final transient Object[] args;
 

@@ -7,13 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.portfolio.erp.application.config.DemoProperties;
 import com.portfolio.erp.domain.model.Category;
 import com.portfolio.erp.domain.model.Customer;
 import com.portfolio.erp.domain.model.InventoryItem;
@@ -53,8 +50,6 @@ import com.portfolio.erp.domain.ports.out.WarehouseRepositoryPort;
 @Component
 public class DemoDataSeeder implements DemoDataPort {
 
-    private static final Logger log = LoggerFactory.getLogger(DemoDataSeeder.class);
-
     private static final String[] CATEGORY_NAMES = {
             "Laptops", "Monitors", "Peripherals", "Networking", "Storage",
             "Office Furniture", "Paper & Stationery", "Ink & Toner", "Phones", "Accessories"
@@ -82,7 +77,6 @@ public class DemoDataSeeder implements DemoDataPort {
     private static final String[] PAYMENT_METHODS = {"TRANSFER", "CARD", "CASH", "TRANSFER", "CARD"};
 
     private final JdbcClient jdbc;
-    private final DemoProperties properties;
     private final CategoryRepositoryPort categories;
     private final ProductRepositoryPort products;
     private final WarehouseRepositoryPort warehouses;
@@ -95,7 +89,6 @@ public class DemoDataSeeder implements DemoDataPort {
     private final InvoiceRepositoryPort invoices;
 
     public DemoDataSeeder(JdbcClient jdbc,
-                          DemoProperties properties,
                           CategoryRepositoryPort categories,
                           ProductRepositoryPort products,
                           WarehouseRepositoryPort warehouses,
@@ -107,7 +100,6 @@ public class DemoDataSeeder implements DemoDataPort {
                           PurchaseOrderRepositoryPort purchaseOrders,
                           InvoiceRepositoryPort invoices) {
         this.jdbc = jdbc;
-        this.properties = properties;
         this.categories = categories;
         this.products = products;
         this.warehouses = warehouses;

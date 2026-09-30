@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
@@ -13,7 +14,7 @@ import com.portfolio.erp.infrastructure.in.web.dto.UserDetail;
 import com.portfolio.erp.infrastructure.in.web.dto.UserSummary;
 import com.portfolio.erp.infrastructure.out.entity.UserEntity;
 
-@Mapper(componentModel = "spring", uses = RoleMapper.class)
+@Mapper(componentModel = "spring", uses = RoleMapper.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
     @Mapping(target = "fullName", expression = "java(user.fullName())")

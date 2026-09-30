@@ -16,7 +16,6 @@ import com.portfolio.erp.infrastructure.in.web.dto.AdjustmentRequest;
 import com.portfolio.erp.infrastructure.in.web.dto.InventoryItemResponse;
 import com.portfolio.erp.infrastructure.in.web.dto.PageMetadata;
 import com.portfolio.erp.infrastructure.in.web.dto.PageStockMovement;
-import com.portfolio.erp.infrastructure.in.web.dto.StockMovementResponse;
 import com.portfolio.erp.infrastructure.in.web.dto.TransferRequest;
 import com.portfolio.erp.infrastructure.out.mapper.InventoryItemMapper;
 import com.portfolio.erp.infrastructure.out.mapper.StockMovementMapper;

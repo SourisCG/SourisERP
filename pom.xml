@@ -177,6 +177,8 @@
                                 <documentationProvider>none</documentationProvider>
                                 <dateLibrary>java8</dateLibrary>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <generateJsonIncludeAnnotations>false</generateJsonIncludeAnnotations>
+                                <generateJsonSetterNullsAnnotations>false</generateJsonSetterNullsAnnotations>
                             </configOptions>
                         </configuration>
                     </execution>

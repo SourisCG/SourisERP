@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
@@ -18,7 +19,7 @@ import com.portfolio.erp.infrastructure.out.entity.PurchaseOrderEntity;
 import com.portfolio.erp.infrastructure.out.entity.PurchaseOrderLineEntity;
 import com.portfolio.erp.infrastructure.out.entity.SupplierEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PurchaseOrderMapper {
 
     Supplier toDomain(SupplierEntity entity);

@@ -5,13 +5,14 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Mapping;
 
 import com.portfolio.erp.domain.model.StockMovement;
 import com.portfolio.erp.infrastructure.in.web.dto.StockMovementResponse;
 import com.portfolio.erp.infrastructure.out.entity.StockMovementEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StockMovementMapper {
 
     @Mapping(target = "productId", source = "product.id")

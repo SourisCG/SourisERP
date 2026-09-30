@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
@@ -18,7 +19,7 @@ import com.portfolio.erp.infrastructure.out.entity.CustomerEntity;
 import com.portfolio.erp.infrastructure.out.entity.SalesOrderEntity;
 import com.portfolio.erp.infrastructure.out.entity.SalesOrderLineEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SalesOrderMapper {
 
     Customer toDomain(CustomerEntity entity);

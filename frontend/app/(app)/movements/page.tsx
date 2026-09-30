@@ -1,9 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { CrudPage } from "@/components/crud";
 import { date } from "@/components/ui";
-import { api } from "@/lib/api";
 
 export default function MovementsPage() {
   return (

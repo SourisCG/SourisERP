@@ -5,6 +5,8 @@ package com.portfolio.erp.domain.exception;
  */
 public class AuthenticationFailedException extends DomainException {
 
+    private static final long serialVersionUID = 1L;
+
     public AuthenticationFailedException(String code, Object... args) {
         super(code, args);
     }

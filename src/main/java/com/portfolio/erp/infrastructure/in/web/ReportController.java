@@ -1,6 +1,5 @@
 package com.portfolio.erp.infrastructure.in.web;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 

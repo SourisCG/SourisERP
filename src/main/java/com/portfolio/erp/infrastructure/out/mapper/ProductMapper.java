@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
@@ -12,7 +13,7 @@ import com.portfolio.erp.domain.model.Product;
 import com.portfolio.erp.infrastructure.in.web.dto.ProductResponse;
 import com.portfolio.erp.infrastructure.out.entity.ProductEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper {
 
     @Mapping(target = "categoryId", source = "category.id")

@@ -1,12 +1,13 @@
 package com.portfolio.erp.infrastructure.out.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Maps report query results (domain records) to generated API DTOs.
  * Fully-qualified names avoid clashes between domain and DTO classes.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReportMapper {
 
     com.portfolio.erp.infrastructure.in.web.dto.SalesSummaryItem toResponse(
