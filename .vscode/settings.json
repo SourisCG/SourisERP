@@ -1,16 +1,36 @@
 {
-  // This project is Docker-first: builds and tests run inside containers
-  // (`make build`, `make test`). Maven and VS Code's Java language server
-  // must NOT compile the same sources at the same time, otherwise their
-  // generated-sources outputs (MapStruct) overwrite each other and produce
-  // errors like "public class  {" in the editor.
+  // ────────────────────────────────────────────────────────────────────────
+  // Docker-first workspace
   //
-  // Keep autobuild disabled and compile with Maven (`make test`), or use the
-  // VS Code task/command "Java: Clean Java Language Server Workspace" after
-  // running Maven outside the editor.
+  // Builds and tests run inside containers (`make build`, `make test`).
+  // Maven and VS Code's Java language server must NOT compile at the same
+  // time: both write generated sources (MapStruct) into multiple target dirs
+  // inside `target/`, and concurrent writes corrupt them ("public class {").
+  // Keep autobuild disabled; compile with Maven, or run "Java: Clean Java
+  // Language Server Workspace" after building outside the editor.
+  // ────────────────────────────────────────────────────────────────────────
   "java.autobuild.enabled": false,
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.import.maven.enabled": true,
+
+  // Test Explorer profiles.
+  // - "Docker (default)"     : works on machines with a usable docker socket.
+  // - "Podman rootless (host)": run integration tests from the editor on
+  //   rootless Podman. Select it in the Test Explorer profile dropdown.
+  //   If Ryuk cannot mount the socket, add
+  //   "TESTCONTAINERS_RYUK_DISABLED": "true" to the env block.
+  "java.test.config": [
+    {
+      "name": "Docker (default)"
+    },
+    {
+      "name": "Podman rootless (host)",
+      "env": {
+        "DOCKER_HOST": "unix://${env:XDG_RUNTIME_DIR}/podman/podman.sock"
+      }
+    }
+  ],
+
   "files.watcherExclude": {
     "**/target/**": true,
     "**/.next/**": true,
