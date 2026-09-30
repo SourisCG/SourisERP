@@ -1,0 +1,54 @@
+# Render Blueprint (option A: Render + Neon free PostgreSQL)
+# Docs: https://render.com/docs/blueprint-spec
+#
+# 1. Create a free PostgreSQL at https://neon.tech and copy the JDBC URL:
+#    jdbc:postgresql://<host>/<db>?user=<user>&password=<pass>&sslmode=require
+# 2. Deploy this repo as a Blueprint in Render and set the sync:false secrets.
+# 3. Optional: keep the free backend awake with an uptime ping every 10 min
+#    (e.g. cron-job.org -> https://<backend>.onrender.com/actuator/health).
+
+services:
+  - type: web
+    name: erp-core-backend
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_MODE
+        value: "true"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: erp-core-frontend
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    healthCheckPath: /login
+    envVars:
+      - key: INTERNAL_API_URL
+        fromService:
+          name: erp-core-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: erp-core-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+# Note: the demo backend also supports Neon's direct (non-pooled) connection
+# string; if you use the pooled one, append ?prepareThreshold=0 to the JDBC URL.

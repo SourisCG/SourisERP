@@ -1,0 +1,26 @@
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# API, OpenAPI contract and Swagger UI go to the backend
+	@backend path /api/* /actuator/* /openapi.yaml /swagger-ui* /v3/*
+	handle @backend {
+		reverse_proxy backend:8080
+	}
+
+	# Everything else is the Next.js dashboard
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
