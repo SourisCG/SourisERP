@@ -1,0 +1,145 @@
+name: erp-core
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: erp-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-erp}
+      POSTGRES_USER: ${POSTGRES_USER:-erp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-erp}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-erp} -d ${POSTGRES_DB:-erp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - erp-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: erp-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./infra/pgadmin/servers.json:/pgadmin4/servers.json:ro,Z
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - erp-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: erp-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-erp}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-erp}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-erp}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-change-me-in-production}
+      JWT_ACCESS_TTL: ${JWT_ACCESS_TTL:-PT30M}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      DEMO_MODE: ${DEMO_MODE:-true}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - erp-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+    container_name: erp-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      INTERNAL_API_URL: http://backend:8080
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    networks:
+      - erp-network
+
+  # ── Tooling: build & test inside containers (no local toolchain) ──────────
+  maven:
+    image: maven:3.9-eclipse-temurin-21
+    profiles: [tools]
+    working_dir: /workspace
+    entrypoint: ["mvn", "-B", "-ntp"]
+    # SELinux: unconfined access is required to use the mounted Docker socket
+    security_opt:
+      - label=disable
+    volumes:
+      - .:/workspace:Z
+      - m2_cache:/root/.m2
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+      TESTCONTAINERS_HOST_OVERRIDE: host.docker.internal
+      TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: ${DOCKER_SOCKET:-/var/run/docker.sock}
+      # Testcontainers containers join this network so the test JVM can reach
+      # them by container IP (no published ports needed, rootless-friendly).
+      TESTCONTAINERS_NETWORK: erp-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - erp-network
+
+  node:
+    image: node:22-alpine
+    profiles: [tools]
+    working_dir: /workspace
+    entrypoint: ["npm"]
+    volumes:
+      - ./frontend:/workspace:Z
+      - node_modules_cache:/workspace/node_modules
+    networks:
+      - erp-network
+
+  e2e:
+    image: node:22-bookworm
+    profiles: [tools]
+    working_dir: /workspace
+    entrypoint: ["npx", "playwright"]
+    environment:
+      BASE_URL: http://frontend:3000
+      API_URL: http://backend:8080
+      PLAYWRIGHT_BROWSERS_PATH: /workspace/.playwright-browsers
+    volumes:
+      - ./frontend:/workspace:Z
+      - node_modules_cache:/workspace/node_modules
+      - ./docs/screenshots:/workspace/screenshots:Z
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - erp-network
+
+networks:
+  erp-network:
+    name: erp-network
+    driver: bridge
+
+volumes:
+  pgdata:
+  pgadmin_data:
+  m2_cache:
+  node_modules_cache:

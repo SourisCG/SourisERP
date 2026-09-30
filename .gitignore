@@ -1,0 +1,51 @@
+# Java / Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.prod
+
+# Node / Next.js
+node_modules/
+.next/
+frontend/out/
+npm-debug.log*
+yarn-error.log*
+.eslintcache
+*.tsbuildinfo
+
+# Playwright
+frontend/.playwright-browsers/
+frontend/playwright-report/
+frontend/test-results/
+docs/screenshots/*
+!docs/screenshots/.gitkeep
+
+# Coverage / reports
+coverage/
+*.exec
+
+# Logs
+logs/
+*.log
+
+# Docker
+*.pid
